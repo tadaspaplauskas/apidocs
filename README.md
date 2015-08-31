@@ -8,7 +8,7 @@ ApiDocs is a simple Laravel 5.1 package that will automatically generate API doc
 
 Add at the end of your composer.json file:
 
-**"repositories": [{
+``"repositories": [{
         "type": "package",
         "package": {
                 "name": "frankly/apidocs",
@@ -19,21 +19,21 @@ Add at the end of your composer.json file:
                         "reference": "master"
                 }
         }
-}]**
+}]``
 	
 Add to the require-dev/require:
 **"frankly/apidocs": ">=0.1",**
 	
 Add to psr-4:
-**"Frankly\\ApiDocs\\": "vendor/frankly/apidocs/app"**
+```"Frankly\\ApiDocs\\": "vendor/frankly/apidocs/app"```
 
 Finally, add this to the config/app.php 'providers' array
-**Frankly\ApiDocs\ApiDocsServiceProvider::class,**
+```Frankly\ApiDocs\ApiDocsServiceProvider::class,```
 	
 Run:
-	composer update frankly/apidocs
-	or just
-	composer update
+```composer update frankly/apidocs
+or just
+composer update```
 	
 	
 Ready!
@@ -48,7 +48,7 @@ If you wish to change the password (and you definitely should if your developmen
 
 Format more or less follows the usual DocBlocks format. Write comments right before the route you wish to document. Example:
 
-**
+```
     /**
     * @title Upload an image
     * @description Uploads the original image to the server, resizes it.
@@ -66,8 +66,7 @@ Format more or less follows the usual DocBlocks format. Write comments right bef
     * @return string path
     */
     Route::get('images/get/{imageID}', 'ImageController@get');
-
-**
+```
 
 As you probably noticed, @title and @description are optional tags - the first line is always considered as title. 
 Description line is optional and doesn't have to be specified at all. Use whatever format is more readable to you.
