@@ -75,4 +75,4 @@ Package is smart enough to recognise group prefixes, so don't worry about them.
 
 ### Found a bug? ###
 
- tadaspaplauskas at gmail
+tadaspaplauskas at gmail
