@@ -2,11 +2,11 @@
 
 ### What is this repository for? ###
 
-ApiDocs is a simple Laravel 5.1 package that will automatically generate API documentation from your routes.php life.
+ApiDocs is a simple Laravel 5.1 package that will automatically generate API documentation from your routes.php file.
 
-### How do I get set up? ###
+### Setup ###
 
-Add at the end of your composer.json file:
+Add this at the end of your composer.json file:
 
 ~~~
 "repositories": [{
@@ -23,7 +23,7 @@ Add at the end of your composer.json file:
 }]
 ~~~
 	
-Add to the require-dev/require:
+Add to the require-dev:
 ~~~
 "frankly/apidocs": ">=0.1",
 ~~~
@@ -41,7 +41,7 @@ Run:
 ~~~
 composer update frankly/apidocs
 or just
-composer update```
+composer update
 ~~~
 
 Ready!
@@ -50,7 +50,7 @@ Ready!
 
 If setting up ApiDocs went well, you should be able to access it through /apidocs (for example http://website.dev/apidocs). Default password is "secret".
 
-If you wish to change the password (and you definitely should if your development environment is public), run artisan command "vendor:publish". Now you can edit default settings in the config/apidocs.php file.
+If you wish to change the password (and you definitely should if your development environment is public), run artisan command "vendor:publish". Now you can edit the default settings in the config/apidocs.php file.
 
 ### How to write documentation? ###
 
@@ -76,7 +76,7 @@ Format more or less follows the usual DocBlocks format. Write comments right bef
     Route::get('images/get/{imageID}', 'ImageController@get');
 ~~~
 
-As you probably noticed, @title and @description are optional tags - the first line is always considered as title. 
+As you probably noticed, @ title and @ description are optional tags - the first line is always considered as title. 
 Description line is optional and doesn't have to be specified at all. Use whatever format is more readable to you.
 
 Undocumented routes are ignored.
