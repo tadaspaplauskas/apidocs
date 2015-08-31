@@ -25,7 +25,7 @@ class ApiDocsServiceProvider extends ServiceProvider
         
         //create config file for password in root/config folder
         $this->publishes([
-            __DIR__ . '/../../../config/apidocs.php' => config_path('apidocs.php')
+            __DIR__ . '/../config/apidocs.php' => config_path('apidocs.php')
         ]);
         
     }
