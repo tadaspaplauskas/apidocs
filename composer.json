@@ -1,0 +1,21 @@
+{
+    "name": "frankly/apidocs",
+    "description": "A simple way to automatically document API routes",
+    "authors": [
+        {
+            "name": "Tadas Paplauskas",
+            "email": "tadaspaplauskas@gmail.com"
+        }
+    ],
+    "keywords": ["documentation", "generator", "laravel"],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Frankly\\ApiDocs": "app/"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {
+        "illuminate:support" : "~5"
+    }
+}
