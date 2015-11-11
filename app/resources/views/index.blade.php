@@ -177,7 +177,7 @@
                 background-color: #f39c12;
                 color: white;
             }
-            .badge.post
+            .badge.post, .badge.any
             {
                 background-color: #18bc9c;
                 color: white;
@@ -397,7 +397,7 @@
                 background-color: white;
                 color: #000;
             }
-            .action h4.action-heading .method.post
+            .action h4.action-heading .method.post, action h4.action-heading .any
             {
                 background-color: white;
                 color: #000;
@@ -434,9 +434,9 @@
                 border-bottom-color: #3498db;
                 color: white;
             }
-            .action.post
+            .action.post, .action.any
             {
-                border-color: #18bc9c;
+                border-color: #C97626;
             }
             .action.post h4.action-heading
             {
@@ -490,6 +490,16 @@
             {
                 margin-top: 10px;
             }
+            .method{
+                background-color: white;
+                color: #000;
+            }            
+            .action.any h4.action-heading
+            {
+                background: #C97626;
+                border-bottom-color: #C97626;
+                color: white;
+            }
         </style>
     </head>
     <body>
@@ -511,7 +521,6 @@
             <header>
                 <h1 id="top">{{ $title }}</h1>
             </header>
-            
             @foreach ($apiData as $group => $elements)
                 <section id="{{ $group }}-group" class="resource-group">
                 <h2 class="group-heading"><a href="#{{ $group }}-group">{{ $group }}</a></h2>

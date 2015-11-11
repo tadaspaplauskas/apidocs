@@ -112,7 +112,7 @@ class ApiDocsController extends Controller
                 //foreach sets internal array pointer to the next item before current execution - dont ask my why
                 $nextLine = current($routeLines);
                 
-                if (preg_match('/(get|post)\((\'|\")(.*?)(\'|\")/i', $nextLine, $matches))
+                if (preg_match('/(get|post|any)\((\'|\")(.*?)(\'|\")/i', $nextLine, $matches))
                 {
                     //get or post method (or any)
                     $newRoute['method'] = strtoupper($matches[1]);
@@ -167,7 +167,7 @@ class ApiDocsController extends Controller
         }
         
         $routesGrouped = [];
-        
+        print_r($routesGrouped);
         foreach ($routesDocumented as $route)
         {
             $routesGrouped[$route['group']][] = $route;
