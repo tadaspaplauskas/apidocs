@@ -89,7 +89,7 @@
                 border-spacing: 0;
                 margin-bottom: 12px;
             }
-            
+
             nav
             {
                 bottom: 0;
@@ -344,12 +344,12 @@
                 margin-bottom: 12px;
                 overflow: hidden;
                 padding: 12px 12px 0 12px;
-                
+
             }
             .clickable {
                 cursor: pointer;
             }
-            
+
             .action h4.action-heading
             {
                 border-bottom: 1px solid transparent;
@@ -434,7 +434,12 @@
                 border-bottom-color: #3498db;
                 color: white;
             }
-            .action.post, .action.any
+            .action.post
+            {
+                border-color: #2F8E7B;
+            }
+
+            .action.any
             {
                 border-color: #C97626;
             }
@@ -493,7 +498,7 @@
             .method{
                 background-color: white;
                 color: #000;
-            }            
+            }
             .action.any h4.action-heading
             {
                 background: #C97626;
@@ -505,7 +510,7 @@
     <body>
 <div class="container">
     <div class="row">
-        
+
         <nav><small>Last updated: {{ $lastModified }} (<a href="apidocs/logout">logout</a>)</small>
             <div class="resource-group">
                 <div class="heading">
@@ -524,7 +529,7 @@
             @foreach ($apiData as $group => $elements)
                 <section id="{{ $group }}-group" class="resource-group">
                 <h2 class="group-heading"><a href="#{{ $group }}-group">{{ $group }}</a></h2>
-         
+
                 @foreach ($elements as $call)
                     <div id="notes-note-list" class="resource">
                         <div id="{{ $call['method'] . $call['path'] }}" class="action {{ $call['method'] }}">
@@ -533,7 +538,7 @@
                                 <a href="#{{ $call['method'] . $call['path'] }}" class="method {{ $call['method'] }}">{{ $call['method'] }}
                                 <code class="uri">{{ $call['path'] }}</code></a>
                             </h4>
-                            
+
                             <div class="hide" id="{{ $call['path'] }}">
                                 @if(isset($call['description']))
                                 <p>
@@ -558,18 +563,18 @@
                         </div>
                     </div>
                 @endforeach
-                
+
                 </section>
             @endforeach
         </div>
     </div>
 </div>
-        
-        
+
+
 <script>
     function toggle(elemID) {
         var element = document.getElementById(elemID);
-        
+
         if (element.className == "show")
         {
             element.className = "hide";

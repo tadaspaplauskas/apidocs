@@ -8,9 +8,9 @@ use Input;
 
 class ApiDocsController extends Controller
 {
-    
+
     private $config;
-        
+
     public function __construct()
     {
         /**
@@ -20,7 +20,7 @@ class ApiDocsController extends Controller
         $this->config = config('apidocs');
         $this->path = app_path($this->config['routes']);
     }
-	
+
     /**
      * Display a listing of different methods available to frondend.
      *
@@ -32,45 +32,45 @@ class ApiDocsController extends Controller
         {
             return redirect('apidocs/login');
         }
-        
+
         $apiData = $this->parseRoutes();
-        //dd($apiData);
+
         $lastModified = date('M jS (D)', filemtime($this->path));
         $title = $this->config['title'];
-        
+
         return view('apidocs::index', compact('apiData', 'lastModified', 'title'));
     }
-    
+
     public function login()
     {
         $title = $this->config['title'];
-        
+
         return view('apidocs::login', compact('title'));
     }
-    
+
     public function check(Request $request)
     {
         if (Input::has('password'))
         {
             $password = Input::get('password');
-            
+
             if ($password === $this->config['password'])
             {
                 $request->session()->set('ApiDocsPassword', $password);
             }
-        }        
+        }
         return redirect('apidocs');
     }
-    
+
     public function logout(Request $request)
     {
         if ($request->session()->has('ApiDocsPassword'))
         {
             $request->session()->forget('ApiDocsPassword');
-        }        
+        }
         return redirect('apidocs/login');
     }
-    
+
     /**
      * Parses routes.php file, gets DocBlock comments for routes.
      * @param type $path to the routes.php (optional)
@@ -82,43 +82,52 @@ class ApiDocsController extends Controller
         {
             $path = $this->path;
         }
-        
+
         try {
             $routeContents = File::get($path);
         } catch( Illuminate\Filesystem\FileNotFoundException $exception )
         {
-            die('routes.php not found.');
+            return 'routes.php not found.';
         }
-        
+
         $routeContents = str_replace("\t", "", $routeContents);
         $routeLines = explode("\n", $routeContents);
-        
+
         $routesDocumented = [];
         $inDocBlock = false;
 		$prefixes = [];
-        
-        foreach ($routeLines as &$line) 
+
+        foreach ($routeLines as &$line)
         {
             // if we have found the beginning of docblock, make note of it
-            if (str_contains($line, '/**') && !$inDocBlock)
+            if (str_contains($line, '/**') && !str_contains($line, '*/')
+             && !str_contains($line, '/***') && !$inDocBlock)
             {
                 $newRoute = [];
                 $inDocBlock = true;
-                
-            }       
+
+            }
             // if we have found the end of the docblock, close it and submit to the final array
             else if (str_contains($line, '*/') && $inDocBlock)
             {
                 //foreach sets internal array pointer to the next item before current execution - dont ask my why
                 $nextLine = current($routeLines);
-                
-                if (preg_match('/(get|post|any)\((\'|\")(.*?)(\'|\")/i', $nextLine, $matches))
+
+                if (preg_match('/(any|get|post|put|delete)\((\'|\")(.*?)(\'|\")/i', $nextLine, $matches))
                 {
                     //get or post method (or any)
                     $newRoute['method'] = strtoupper($matches[1]);
-                    $newRoute['path'] = '/' . implode('/', $prefixes) . '/' . $matches[3];
+
+                    if (!empty($prefixes))
+                    {
+                        $newRoute['path'] = '/' . implode('/', $prefixes) . '/' . $matches[3];
+                    }
+                    else
+                    {
+                        $newRoute['path'] = '/' . $matches[3];
+                    }
                 }
-                
+
                 if (isset($newRoute))
                 {
                     $routesDocumented[] = $newRoute;
@@ -131,7 +140,7 @@ class ApiDocsController extends Controller
             {
                 $line = preg_replace('/\*/', '', $line, 1);
                 $line = trim($line);
-                
+
                 //read docblock structure one line at the time
                 if (!empty($line))
                 {
@@ -142,7 +151,7 @@ class ApiDocsController extends Controller
                             $tag = strtolower($matches[1]);
                             $value = $matches[2];
                         }
-                        $newRoute[$tag] = $value;                        
+                        $newRoute[$tag] = $value;
                     }
                     else if (!isset($newRoute['title']))
                     {
@@ -152,11 +161,12 @@ class ApiDocsController extends Controller
                     {
                         $newRoute['description'] = $line;
                     }
-                } 
+                }
             }
             // if we have prefix statement, save it
             else if (!$inDocBlock && preg_match('/(\'|\")prefix(\'|\") => (\'|\")(\w*?)(\'|\")/i', $line, $matches))
             {
+                print_r($matches[4]);
                 array_push($prefixes, $matches[4]);
             }
             // if group ends, remove last prefix
@@ -165,14 +175,17 @@ class ApiDocsController extends Controller
                 array_pop($prefixes);
             }
         }
-        
+
         $routesGrouped = [];
-        print_r($routesGrouped);
+
         foreach ($routesDocumented as $route)
         {
-            $routesGrouped[$route['group']][] = $route;
+            if (!empty($route))
+            {
+               $routesGrouped[$route['group']][] = $route;
+            }
         }
-        
+        //dd($routesGrouped);
         return $routesGrouped;
     }
 
