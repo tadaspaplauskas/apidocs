@@ -12,37 +12,38 @@ Add this at the end of your composer.json file:
 "repositories": [{
     "type": "package",
     "package": {
-        "name": "frankly/apidocs",
-        "version": "0.1",
+        "name": "paplauskas/apidocs",
+        "version": "0.1.2",
         "source": {
-            "url": "https://TadasPaplauskas@bitbucket.org/TadasPaplauskas/apidocs.git",
-            "type": "git",              
+            "url": "https://github.com/Paplauskas/apidocs.git",
+            "type": "git",
             "reference": "master"
         }
     }
 }]
 ~~~
-	
+
 Add to the require-dev:
 ~~~
-"frankly/apidocs": ">=0.1",
+"paplauskas/apidocs": ">=0.1",
 ~~~
-	
+
 Add to psr-4:
 ~~~
-"Frankly\\ApiDocs\\": "vendor/frankly/apidocs/app"
+"Paplauskas\\ApiDocs\\": "vendor/paplauskas/apidocs/app"
+~~~
+Run:
+~~~
+composer update paplauskas/apidocs
+or just
+composer update
 ~~~
 
 Finally, add this to the config/app.php 'providers' array
 ~~~
-Frankly\ApiDocs\ApiDocsServiceProvider::class,
-~~~	
-Run:
+paplauskas\apidocs\ApiDocsServiceProvider::class,
 ~~~
-composer update frankly/apidocs
-or just
-composer update
-~~~
+
 
 Ready!
 
@@ -65,7 +66,7 @@ Format more or less follows the usual DocBlocks format. Write comments right bef
     * @return string path
     */
     Route::post('images/upload', 'ImageController@upload');
-    
+
     /**
     * Get image path
     * Returns image path based on image ID.
@@ -76,7 +77,7 @@ Format more or less follows the usual DocBlocks format. Write comments right bef
     Route::get('images/get/{imageID}', 'ImageController@get');
 ~~~
 
-As you probably noticed, @ title and @ description are optional tags - the first line is always considered as title. 
+As you probably noticed, @ title and @ description are optional tags - the first line is always considered as title.
 Description line is optional and doesn't have to be specified at all. Use whatever format is more readable to you.
 
 Undocumented routes are ignored.
@@ -85,4 +86,4 @@ Package is smart enough to recognise group prefixes, so don't worry about them.
 
 ### Found a bug? ###
 
-tadaspaplauskas at gmail
+File an issue in issue tracker.

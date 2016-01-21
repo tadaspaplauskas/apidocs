@@ -1,5 +1,5 @@
 {
-    "name": "frankly/apidocs",
+    "name": "paplauskas/apidocs",
     "description": "A simple way to automatically document API routes",
     "authors": [
         {
@@ -11,7 +11,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Frankly\\ApiDocs": "app/"
+            "Paplauskas\\ApiDocs": "app/"
         }
     },
     "minimum-stability": "dev",
