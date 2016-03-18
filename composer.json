@@ -12,7 +12,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Paplauskas\ApiDocs\\": "app/"
+            "Paplauskas\\ApiDocs\\": "app/"
         }
     },
     "minimum-stability": "dev",
