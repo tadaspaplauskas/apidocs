@@ -12,6 +12,7 @@
     <div class="modal-dialog">
             <h1 class="text-center">{{ $title }}</h1>
             <form class="form col-md-12 center-block" method="POST" action="/apidocs/check">
+			  {!! csrf_field() !!}
               <div class="form-group">
                 <input type="password" name="password" class="form-control input-lg" placeholder="Password">
               </div>

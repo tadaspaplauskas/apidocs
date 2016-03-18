@@ -508,82 +508,82 @@
         </style>
     </head>
     <body>
-<div class="container">
-    <div class="row">
+    <div class="container">
+        <div class="row">
 
-        <nav><small>Last updated: {{ $lastModified }} (<a href="apidocs/logout">logout</a>)</small>
-            <div class="resource-group">
-                <div class="heading">
-                @foreach ($apiData as $group => $elements)
-                    <a href="#{{ $group }}-group">
-                        {{ $group }}
-                    </a>
-                @endforeach
+            <nav><small>Last updated: {{ $lastModified }} (<a href="apidocs/logout">logout</a>)</small>
+                <div class="resource-group">
+                    <div class="heading">
+                    @foreach ($apiData as $group => $elements)
+                        <a href="#{{ $group }}-group">
+                            {{ $group }}
+                        </a>
+                    @endforeach
+                    </div>
                 </div>
-            </div>
-        </nav>
-        <div class="content">
-            <header>
-                <h1 id="top">{{ $title }}</h1>
-            </header>
-            @foreach ($apiData as $group => $elements)
-                <section id="{{ $group }}-group" class="resource-group">
-                <h2 class="group-heading"><a href="#{{ $group }}-group">{{ $group }}</a></h2>
+            </nav>
+            <div class="content">
+                <header>
+                    <h1 id="top">{{ $title }}</h1>
+                </header>
+                @foreach ($apiData as $group => $elements)
+                    <section id="{{ $group }}-group" class="resource-group">
+                    <h2 class="group-heading"><a href="#{{ $group }}-group">{{ $group }}</a></h2>
 
-                @foreach ($elements as $call)
-                    <div id="notes-note-list" class="resource">
-                        <div id="{{ $call['method'] . $call['path'] }}" class="action {{ $call['method'] }}">
-                            <h4 class="action-heading clickable" onclick="toggle('{{ $call['path'] }}')">
-                                <div class="name">{{ $call['title'] }}</div>
-                                <a href="#{{ $call['method'] . $call['path'] }}" class="method {{ $call['method'] }}">{{ $call['method'] }}
-                                <code class="uri">{{ $call['path'] }}</code></a>
-                            </h4>
+                    @foreach ($elements as $call)
+                        <div id="notes-note-list" class="resource">
+                            <div id="{{ $call['method'] . $call['path'] }}" class="action {{ $call['method'] }}">
+                                <h4 class="action-heading clickable" onclick="toggle('{{ $call['path'] }}')">
+                                    <div class="name">{{ $call['title'] }}</div>
+                                    <a href="#{{ $call['method'] . $call['path'] }}" class="method {{ $call['method'] }}">{{ $call['method'] }}
+                                    <code class="uri">{{ $call['path'] }}</code></a>
+                                </h4>
 
-                            <div class="hide" id="{{ $call['path'] }}">
-                                @if(isset($call['description']))
-                                <p>
-                                    {{ $call['description'] }}
-                                </p>
-                                @endif
+                                <div class="hide" id="{{ $call['path'] }}">
+                                    @if(isset($call['description']))
+                                    <p>
+                                        {{ $call['description'] }}
+                                    </p>
+                                    @endif
 
-                                @if(isset($call['param']))
-                                <p>
-                                    <h4>Input</h4>
-                                    {{ $call['param'] }}
-                                </p>
-                                @endif
+                                    @if(isset($call['param']))
+                                    <p>
+                                        <h4>Input</h4>
+                                        {{ $call['param'] }}
+                                    </p>
+                                    @endif
 
-                                @if(isset($call['return']))
-                                <p>
-                                    <h4>Output</h4>
-                                    {{ $call['return'] }}
-                                </p>
-                                @endif
+                                    @if(isset($call['return']))
+                                    <p>
+                                        <h4>Output</h4>
+                                        {{ $call['return'] }}
+                                    </p>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
 
-                </section>
-            @endforeach
+                    </section>
+                @endforeach
+            </div>
         </div>
     </div>
-</div>
 
 
-<script>
-    function toggle(elemID) {
-        var element = document.getElementById(elemID);
+    <script>
+        function toggle(elemID) {
+            var element = document.getElementById(elemID);
 
-        if (element.className == "show")
-        {
-            element.className = "hide";
+            if (element.className == "show")
+            {
+                element.className = "hide";
+            }
+            else
+            {
+                element.className = "show";
+            }
         }
-        else
-        {
-            element.className = "show";
-        }
-    }
-</script>
-</body>
+    </script>
+    </body>
 </html>

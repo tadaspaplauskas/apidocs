@@ -13,7 +13,7 @@ Add this at the end of your composer.json file:
     "type": "package",
     "package": {
         "name": "paplauskas/apidocs",
-        "version": "0.1.2",
+        "version": "0.1.3",
         "source": {
             "url": "https://github.com/Paplauskas/apidocs.git",
             "type": "git",

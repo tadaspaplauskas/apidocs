@@ -1,5 +1,5 @@
 <?php
-namespace Paplauskas\ApiDocs\Http\Controllers;
+namespace Frankly\ApiDocs\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -166,7 +166,6 @@ class ApiDocsController extends Controller
             // if we have prefix statement, save it
             else if (!$inDocBlock && preg_match('/(\'|\")prefix(\'|\") => (\'|\")(\w*?)(\'|\")/i', $line, $matches))
             {
-                print_r($matches[4]);
                 array_push($prefixes, $matches[4]);
             }
             // if group ends, remove last prefix
@@ -185,7 +184,6 @@ class ApiDocsController extends Controller
                $routesGrouped[$route['group']][] = $route;
             }
         }
-        //dd($routesGrouped);
         return $routesGrouped;
     }
 
