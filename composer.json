@@ -12,12 +12,12 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Paplauskas\\ApiDocs\\": "app/"
+            "Paplauskas\ApiDocs\\": "app/"
         }
     },
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.5.9",
-        "illuminate:support" : "~5"
+        "illuminate/support" : "~5"
     }
 }
