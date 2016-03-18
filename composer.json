@@ -7,11 +7,12 @@
             "email": "tadaspaplauskas@gmail.com"
         }
     ],
+	"homepage": "https://github.com/TadasPaplauskas/apidocs",
     "keywords": ["documentation", "generator", "laravel"],
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Paplauskas\\ApiDocs": "app/"
+            "Paplauskas\\ApiDocs\\": "app/"
         }
     },
     "minimum-stability": "dev",
