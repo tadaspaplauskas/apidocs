@@ -20,7 +20,7 @@ composer update
 
 Finally, add this to the config/app.php 'providers' array
 ~~~
-paplauskas\apidocs\ApiDocsServiceProvider::class,
+Paplauskas\ApiDocs\ApiDocsServiceProvider::class,
 ~~~
 
 
