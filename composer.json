@@ -1,5 +1,6 @@
 {
     "name": "paplauskas/apidocs",
+	"version": "0.1.3",
     "description": "A simple way to automatically document API routes",
     "authors": [
         {

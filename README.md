@@ -6,32 +6,11 @@ ApiDocs is a simple Laravel 5.1 package that will automatically generate API doc
 
 ### Setup ###
 
-Add this at the end of your composer.json file:
-
-~~~
-"repositories": [{
-    "type": "package",
-    "package": {
-        "name": "paplauskas/apidocs",
-        "version": "0.1.3",
-        "source": {
-            "url": "https://github.com/Paplauskas/apidocs.git",
-            "type": "git",
-            "reference": "master"
-        }
-    }
-}]
-~~~
-
 Add to the require-dev:
 ~~~
 "paplauskas/apidocs": ">=0.1",
 ~~~
 
-Add to psr-4:
-~~~
-"Paplauskas\\ApiDocs\\": "vendor/paplauskas/apidocs/app"
-~~~
 Run:
 ~~~
 composer update paplauskas/apidocs

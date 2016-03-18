@@ -1,5 +1,5 @@
 <?php
-namespace Frankly\ApiDocs\Http\Controllers;
+namespace Paplauskas\ApiDocs\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
