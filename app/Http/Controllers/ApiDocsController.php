@@ -3,8 +3,6 @@ namespace Paplauskas\ApiDocs\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use File;
-use Input;
 
 class ApiDocsController extends Controller
 {
@@ -34,7 +32,6 @@ class ApiDocsController extends Controller
         }
 
         $apiData = $this->parseRoutes();
-
         $lastModified = date('M jS (D)', filemtime($this->path));
         $title = $this->config['title'];
 
@@ -50,9 +47,9 @@ class ApiDocsController extends Controller
 
     public function check(Request $request)
     {
-        if (Input::has('password'))
+        if ($request->has('password'))
         {
-            $password = Input::get('password');
+            $password = $request->get('password');
 
             if ($password === $this->config['password'])
             {
@@ -83,15 +80,13 @@ class ApiDocsController extends Controller
             $path = $this->path;
         }
 
-        try {
-            $routeContents = File::get($path);
-        } catch( Illuminate\Filesystem\FileNotFoundException $exception )
+        $routeLines = file($path);
+        if ($routeLines === false)
         {
-            return 'routes.php not found.';
+            return 'Something went wrong, routes.php not found.';
         }
 
-        $routeContents = str_replace("\t", "", $routeContents);
-        $routeLines = explode("\n", $routeContents);
+        $routeLines = str_replace(["\t", "\n", "\r"], "", $routeLines);
 
         $routesDocumented = [];
         $inDocBlock = false;
@@ -113,7 +108,7 @@ class ApiDocsController extends Controller
                 //foreach sets internal array pointer to the next item before current execution - dont ask my why
                 $nextLine = current($routeLines);
 
-                if (preg_match('/(any|get|post|put|delete)\((\'|\")(.*?)(\'|\")/i', $nextLine, $matches))
+                if (preg_match('/(any|get|post|put|patch|delete)\((\'|\")(.*?)(\'|\")/i', $nextLine, $matches))
                 {
                     //get or post method (or any)
                     $newRoute['method'] = strtoupper($matches[1]);
