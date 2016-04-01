@@ -549,14 +549,18 @@
                                     @if(isset($call['param']))
                                     <p>
                                         <h4>Input</h4>
-                                        {{ $call['param'] }}
+                                        @foreach ($call['param'] as $param)
+                                          {{ $param }}<br/>
+                                        @endforeach
                                     </p>
                                     @endif
 
                                     @if(isset($call['return']))
                                     <p>
                                         <h4>Output</h4>
-                                        {{ $call['return'] }}
+                                        @foreach ($call['return'] as $return)
+                                          {{ $return }}<br/>
+                                        @endforeach
                                     </p>
                                     @endif
                                 </div>

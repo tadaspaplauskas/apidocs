@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 
 class ApiDocsController extends Controller
 {
-
     private $config;
 
     public function __construct()
@@ -80,35 +79,35 @@ class ApiDocsController extends Controller
             $path = $this->path;
         }
 
-        $routeLines = file($path);
+        $routeLines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         if ($routeLines === false)
         {
-            return 'Something went wrong, routes.php not found.';
+            return 'Something is wrong with routes.php file.';
         }
-
-        $routeLines = str_replace(["\t", "\n", "\r"], "", $routeLines);
 
         $routesDocumented = [];
         $inDocBlock = false;
-		$prefixes = [];
+        $justOutOfTheBlock = false;
+	    $prefixes = [];
 
         foreach ($routeLines as &$line)
         {
             // if we have found the beginning of docblock, make note of it
-            if (str_contains($line, '/**') && !str_contains($line, '*/')
-             && !str_contains($line, '/***') && !$inDocBlock)
+            if (strpos($line, '/**') && !strpos($line, '*/')
+             && !strpos($line, '/***') && !$inDocBlock && !$justOutOfTheBlock)
             {
                 $newRoute = [];
                 $inDocBlock = true;
-
             }
-            // if we have found the end of the docblock, close it and submit to the final array
-            else if (str_contains($line, '*/') && $inDocBlock)
+            // if we have found the end of the docblock, skip the line and parse the method
+            else if (strpos($line, '*/') && $inDocBlock)
             {
-                //foreach sets internal array pointer to the next item before current execution - dont ask my why
-                $nextLine = current($routeLines);
-
-                if (preg_match('/(any|get|post|put|patch|delete)\((\'|\")(.*?)(\'|\")/i', $nextLine, $matches))
+              $justOutOfTheBlock = true;
+            }
+            // if we have done processing the block, close it and submit to the final array
+            else if ($justOutOfTheBlock == true)
+            {
+                if (preg_match('/(any|get|post|put|patch|delete)\((\'|\")(.*?)(\'|\")/i', $line, $matches))
                 {
                     //get or post method (or any)
                     $newRoute['method'] = strtoupper($matches[1]);
@@ -129,9 +128,10 @@ class ApiDocsController extends Controller
                     unset($newRoute);
                 }
                 $inDocBlock = false;
+                $justOutOfTheBlock = false;
             }
             // if we are somewhere inside the docblock, the magic happens
-            else if ($inDocBlock && str_contains($line, '*'))
+            else if ($inDocBlock && strpos($line, '*'))
             {
                 $line = preg_replace('/\*/', '', $line, 1);
                 $line = trim($line);
@@ -146,7 +146,12 @@ class ApiDocsController extends Controller
                             $tag = strtolower($matches[1]);
                             $value = $matches[2];
                         }
-                        $newRoute[$tag] = $value;
+
+                        if(in_array($tag, ['group', 'title', 'description'])) {
+                            $newRoute[$tag] = $value;
+                        } else {
+                            $newRoute[$tag][] = $value;
+                        }
                     }
                     else if (!isset($newRoute['title']))
                     {
@@ -181,6 +186,4 @@ class ApiDocsController extends Controller
         }
         return $routesGrouped;
     }
-
-
 }
