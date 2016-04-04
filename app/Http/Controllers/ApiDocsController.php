@@ -164,7 +164,7 @@ class ApiDocsController extends Controller
                 }
             }
             // if we have prefix statement, save it
-            else if (!$inDocBlock && preg_match('/(\'|\")prefix(\'|\") => (\'|\")(\w*?)(\'|\")/i', $line, $matches))
+            else if (!$inDocBlock && preg_match('/(\'|\")prefix(\'|\") => (\'|\")([\w\/]*?)(\'|\")/i', $line, $matches))
             {
                 array_push($prefixes, $matches[4]);
             }
