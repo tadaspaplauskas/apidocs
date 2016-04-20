@@ -531,15 +531,16 @@
                     <h2 class="group-heading"><a href="#{{ $group }}-group">{{ $group }}</a></h2>
 
                     @foreach ($elements as $call)
+                        <?php $elemID = $call['method'] . $call['path']; ?>
                         <div id="notes-note-list" class="resource">
-                            <div id="{{ $call['method'] . $call['path'] }}" class="action {{ $call['method'] }}">
-                                <h4 class="action-heading clickable" onclick="toggle('{{ $call['path'] }}')">
+                            <div id="{{ $elemID }}" class="action {{ $call['method'] }}">
+                                <h4 class="action-heading clickable" onclick="toggle('{{ $elemID }}')">
                                     <div class="name">{{ $call['title'] }}</div>
-                                    <a href="#{{ $call['method'] . $call['path'] }}" class="method {{ $call['method'] }}">{{ $call['method'] }}
+                                    <a href="#{{ $elemID }}" class="method {{ $call['method'] }}">{{ $call['method'] }}
                                     <code class="uri">{{ $call['path'] }}</code></a>
                                 </h4>
 
-                                <div class="hide" id="{{ $call['path'] }}">
+                                <div class="hide" id="{{ $elemID . '-info' }}">
                                     @if(isset($call['description']))
                                     <p>
                                         {{ $call['description'] }}
@@ -577,7 +578,7 @@
 
     <script>
         function toggle(elemID) {
-            var element = document.getElementById(elemID);
+            var element = document.getElementById(elemID + '-info');
 
             if (element.className == "show")
             {
