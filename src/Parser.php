@@ -1,82 +1,26 @@
 <?php
-namespace Paplauskas\ApiDocs\Http\Controllers;
+namespace Paplauskas\ApiDocs;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-
-class ApiDocsController extends Controller
+class Parser
 {
-    private $config;
+    protected $routesPath;
 
     public function __construct()
     {
-        /**
-         * Reads config file.
-         * If there's no user defined configuration in config/apidocs.php, default config is used.
-         */
-        $this->config = config('apidocs');
-        $this->path = app_path($this->config['routes']);
+        $this->routesPath = base_path('routes/api.php');
     }
 
-    /**
-     * Display a listing of different methods available to frondend.
-     *
-     * @return Response
-     */
-    public function index(Request $request)
+    public function getLastModified()
     {
-        if ($request->session()->get('ApiDocsPassword') !== $this->config['password'])
-        {
-            return redirect('apidocs/login');
-        }
-
-        $apiData = $this->parseRoutes();
-        $lastModified = date('M jS (D)', filemtime($this->path));
-        $title = $this->config['title'];
-
-        return view('apidocs::index', compact('apiData', 'lastModified', 'title'));
+        return date('M jS (D)', filemtime($this->routesPath));
     }
 
-    public function login()
-    {
-        $title = $this->config['title'];
 
-        return view('apidocs::login', compact('title'));
-    }
-
-    public function check(Request $request)
-    {
-        if ($request->has('password'))
-        {
-            $password = $request->get('password');
-
-            if ($password === $this->config['password'])
-            {
-                $request->session()->set('ApiDocsPassword', $password);
-            }
-        }
-        return redirect('apidocs');
-    }
-
-    public function logout(Request $request)
-    {
-        if ($request->session()->has('ApiDocsPassword'))
-        {
-            $request->session()->forget('ApiDocsPassword');
-        }
-        return redirect('apidocs/login');
-    }
-
-    /**
-     * Parses routes.php file, gets DocBlock comments for routes.
-     * @param type $path to the routes.php (optional)
-     * @return array
-     */
-    private function parseRoutes($path = '')
+    public function parseRoutes($path = '')
     {
         if (empty($path))
         {
-            $path = $this->path;
+            $path = $this->routesPath;
         }
 
         $routeLines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -88,7 +32,7 @@ class ApiDocsController extends Controller
         $routesDocumented = [];
         $inDocBlock = false;
         $justOutOfTheBlock = false;
-	    $prefixes = [];
+        $prefixes = [];
 
         foreach ($routeLines as &$line)
         {

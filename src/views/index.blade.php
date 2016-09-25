@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>{{ $title }} - {{ $lastModified }}</title>
+        <title>ApiDocs - {{ $lastModified }}</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
         <style>
             @import url(http://fonts.googleapis.com/css?family=Roboto:400,700|Inconsolata|Raleway:200);
@@ -511,7 +511,7 @@
     <div class="container">
         <div class="row">
 
-            <nav><small>Last updated: {{ $lastModified }} (<a href="apidocs/logout">logout</a>)</small>
+            <nav><small>Last updated: {{ $lastModified }}</small>
                 <div class="resource-group">
                     <div class="heading">
                     @foreach ($apiData as $group => $elements)
@@ -524,7 +524,7 @@
             </nav>
             <div class="content">
                 <header>
-                    <h1 id="top">{{ $title }}</h1>
+                    <h1 id="top">ApiDocs</h1>
                 </header>
                 @foreach ($apiData as $group => $elements)
                     <section id="{{ $group }}-group" class="resource-group">
