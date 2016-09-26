@@ -1,133 +1,179 @@
 <?php
 namespace Paplauskas\ApiDocs;
 
+use Paplauskas\ApiDocs\Endpoint;
+
 class Parser
 {
-    protected $routesPath;
+    public $paths;
 
     public function __construct()
     {
-        $this->routesPath = base_path('routes/api.php');
+        $base = __DIR__ . '/../../../../';
+
+        $this->paths = [
+            $base . 'routes/api.php',
+            $base . 'routes/web.php',
+            $base . 'app/Http/routes.php',
+        ];
     }
 
     public function getLastModified()
     {
-        return date('M jS (D)', filemtime($this->routesPath));
+        // find the most recent modified file date
+        $mostRecent = 0;
+
+        foreach ($this->paths as $path) {
+            if (!file_exists($path))
+                continue;
+
+            $modified = filemtime($path);
+
+            if ($modified > $mostRecent)
+                $mostRecent = $modified;
+        }
+
+        return date('M jS (D)', $mostRecent);
     }
 
-
-    public function parseRoutes($path = '')
+    public function parseEndpoints()
     {
-        if (empty($path))
-        {
-            $path = $this->routesPath;
+        $lines = $this->getLines();
+
+        if (empty($lines)) {
+            return 'Something\'s wrong with routing files.';
         }
 
-        $routeLines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        if ($routeLines === false)
-        {
-            return 'Something is wrong with routes.php file.';
-        }
+        $documentedEndpoints = [];
+        $endpoint = null;
 
-        $routesDocumented = [];
-        $inDocBlock = false;
-        $justOutOfTheBlock = false;
-        $prefixes = [];
+        // iterate through array with pointer functions
+        // foreach would introduce unwanted complications here
+        reset($lines);
 
-        foreach ($routeLines as &$line)
-        {
-            // if we have found the beginning of docblock, make note of it
-            if (strpos($line, '/**') && !strpos($line, '*/')
-             && !strpos($line, '/***') && !$inDocBlock && !$justOutOfTheBlock)
-            {
-                $newRoute = [];
-                $inDocBlock = true;
+        while($line = next($lines)) {
+            // we have found the beginning of a new docblock
+            if (!$endpoint && $this->firstLineOfDocBlock($line)) {
+                $endpoint = new Endpoint();
             }
-            // if we have found the end of the docblock, skip the line and parse the method
-            else if (strpos($line, '*/') && $inDocBlock)
-            {
-              $justOutOfTheBlock = true;
-            }
-            // if we have done processing the block, close it and submit to the final array
-            else if ($justOutOfTheBlock == true)
-            {
-                if (preg_match('/(any|get|post|put|patch|delete)\((\'|\")(.*?)(\'|\")/i', $line, $matches))
-                {
-                    //get or post method (or any)
-                    $newRoute['method'] = strtoupper($matches[1]);
 
-                    if (!empty($prefixes))
-                    {
-                        $newRoute['path'] = '/' . implode('/', $prefixes) . '/' . $matches[3];
-                    }
-                    else
-                    {
-                        $newRoute['path'] = '/' . $matches[3];
-                    }
-                }
+            // we have found the end of the docblock
+            elseif ($endpoint && $this->lastLineOfDocBlock($line)) {
+                // route declaration is expected to be on the next line
+                $this->parseRouteDeclaration($endpoint, next($lines));
 
-                if (isset($newRoute))
-                {
-                    $routesDocumented[] = $newRoute;
-                    unset($newRoute);
-                }
-                $inDocBlock = false;
-                $justOutOfTheBlock = false;
+                // store it for display and close
+                array_push($documentedEndpoints, $endpoint);
+                $endpoint = null;
             }
-            // if we are somewhere inside the docblock, the magic happens
-            else if ($inDocBlock && strpos($line, '*'))
-            {
-                $line = preg_replace('/\*/', '', $line, 1);
-                $line = trim($line);
 
-                //read docblock structure one line at the time
-                if (!empty($line))
-                {
-                    if (starts_with($line, '@'))
-                    {
-                        if (preg_match('/^@(\w*?)\s(.*?)$/i', $line, $matches))
-                        {
-                            $tag = strtolower($matches[1]);
-                            $value = $matches[2];
-                        }
+            // we are somewhere inside the docblock - go looking for info
+            elseif ($endpoint && $this->insideDocBlock($line)) {
+                $this->parseTags($endpoint, $line);
+            }
 
-                        if(in_array($tag, ['group', 'title', 'description'])) {
-                            $newRoute[$tag] = $value;
-                        } else {
-                            $newRoute[$tag][] = $value;
-                        }
-                    }
-                    else if (!isset($newRoute['title']))
-                    {
-                        $newRoute['title'] = $line;
-                    }
-                    else if (!isset($newRoute['description']))
-                    {
-                        $newRoute['description'] = $line;
-                    }
-                }
+            // we have found a prefix statement - store it
+            elseif (!$endpoint && $prefix = $this->parsePrefix($line)) {
+                Endpoint::pushPrefix($prefix);
             }
-            // if we have prefix statement, save it
-            else if (!$inDocBlock && preg_match('/(\'|\")prefix(\'|\") => (\'|\")([\w\/]*?)(\'|\")/i', $line, $matches))
-            {
-                array_push($prefixes, $matches[4]);
-            }
-            // if group ends, remove last prefix
-            else if (!$inDocBlock && str_contains($line, '});'))
-            {
-                array_pop($prefixes);
+
+            // end of group
+            elseif (!$endpoint && str_contains($line, '});')) {
+                Endpoint::popPrefix();
             }
         }
 
-        $routesGrouped = [];
-
-        foreach ($routesDocumented as $route)
-        {
-            if (!empty($route))
-            {
-               $routesGrouped[$route['group']][] = $route;
-            }
-        }
-        return $routesGrouped;
+        return $this->groupEndpoints($documentedEndpoints);
     }
+
+    public function getLines() {
+        $array = [];
+
+        foreach ($this->paths as $path) {
+            if (!file_exists($path))
+                continue;
+
+            $current = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+            $array = array_merge($array, $current);
+        }
+
+        return $array;
+    }
+
+    public function firstLineOfDocBlock($line)
+    {
+        return strpos($line, '/**') !== false
+            && strpos($line, '*/') === false
+            && strpos($line, '/***') === false;
+    }
+
+    public function lastLineOfDocBlock($line)
+    {
+        return strpos($line, '*/') !== false;
+    }
+
+    public function insideDocBlock($line)
+    {
+        return strpos($line, '*') !== false;
+    }
+
+    // get endpoint by reference
+    public function parseRouteDeclaration(&$endpoint, $line)
+    {
+        if (preg_match('/(any|get|post|put|patch|delete)\((\'|\")(.*?)(\'|\")/i', $line, $matches)) {
+
+            $endpoint->setMethod($matches[1]);
+            $endpoint->setPath($matches[3]);
+        }
+    }
+
+    public function parsePrefix($line)
+    {
+        preg_match('/(\'|\")prefix(\'|\") => (\'|\")([\w\/]*?)(\'|\")/i', $line, $matches);
+
+        return isset($matches[4]) ? $matches[4] : null;
+    }
+
+    public function groupEndpoints($endpoints)
+    {
+        foreach ($endpoints as $endpoint)
+        {
+            if (!empty($endpoint))
+            {
+               $grouped[$endpoint->group][] = $endpoint;
+            }
+        }
+
+        return $grouped;
+    }
+
+    public function parseTags(&$endpoint, $line)
+    {
+        $line = trim(preg_replace('/\*/', '', $line, 1));
+
+        if (empty($line)) {
+            return null;
+        }
+
+        if ($line[0] === '@') {
+            // matching @tags
+            if (preg_match('/^@(\w*?)\s(.*?)$/i', $line, $matches)) {
+                $tag = strtolower($matches[1]);
+                $value = $matches[2];
+
+                // check if tag is valid, store it to endpoint
+                if (Endpoint::isTag($tag)) {
+                    $fn = 'set' . $tag;
+
+                    $endpoint->$fn($value);
+                }
+            }
+        } elseif (!$endpoint->getTitle()) { // by default
+            $endpoint->setTitle($line);
+        } elseif (!$endpoint->getDescription()) { // also by default
+            $endpoint->setDescription($line);
+        }
+    }
+
 }

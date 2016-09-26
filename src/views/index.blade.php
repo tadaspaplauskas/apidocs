@@ -514,7 +514,7 @@
             <nav><small>Last updated: {{ $lastModified }}</small>
                 <div class="resource-group">
                     <div class="heading">
-                    @foreach ($apiData as $group => $elements)
+                    @foreach ($endpoints as $group => $elements)
                         <a href="#{{ $group }}-group">
                             {{ $group }}
                         </a>
@@ -526,40 +526,40 @@
                 <header>
                     <h1 id="top">ApiDocs</h1>
                 </header>
-                @foreach ($apiData as $group => $elements)
+                @foreach ($endpoints as $group => $elements)
                     <section id="{{ $group }}-group" class="resource-group">
                     <h2 class="group-heading"><a href="#{{ $group }}-group">{{ $group }}</a></h2>
 
-                    @foreach ($elements as $call)
-                        <?php $elemID = $call['method'] . $call['path']; ?>
+                    @foreach ($elements as $endpoint)
+                        <?php $elemID = $endpoint->method . $endpoint->path; ?>
                         <div id="notes-note-list" class="resource">
-                            <div id="{{ $elemID }}" class="action {{ $call['method'] }}">
+                            <div id="{{ $elemID }}" class="action {{ $endpoint->method }}">
                                 <h4 class="action-heading clickable" onclick="toggle('{{ $elemID }}')">
-                                    <div class="name">{{ $call['title'] }}</div>
-                                    <a href="#{{ $elemID }}" class="method {{ $call['method'] }}">{{ $call['method'] }}
-                                    <code class="uri">{{ $call['path'] }}</code></a>
+                                    <div class="name">{{ $endpoint->title }}</div>
+                                    <a href="#{{ $elemID }}" class="method {{ $endpoint->method }}">{{ $endpoint->method }}
+                                    <code class="uri">{{ $endpoint->path }}</code></a>
                                 </h4>
 
                                 <div class="hide" id="{{ $elemID . '-info' }}">
-                                    @if(isset($call['description']))
+                                    @if(isset($endpoint->description))
                                     <p>
-                                        {{ $call['description'] }}
+                                        {{ $endpoint->description }}
                                     </p>
                                     @endif
 
-                                    @if(isset($call['param']))
+                                    @if(isset($endpoint->param))
                                     <p>
                                         <h4>Input</h4>
-                                        @foreach ($call['param'] as $param)
+                                        @foreach ($endpoint->param as $param)
                                           {{ $param }}<br/>
                                         @endforeach
                                     </p>
                                     @endif
 
-                                    @if(isset($call['return']))
+                                    @if(isset($endpoint->return))
                                     <p>
                                         <h4>Output</h4>
-                                        @foreach ($call['return'] as $return)
+                                        @foreach ($endpoint->return as $return)
                                           {{ $return }}<br/>
                                         @endforeach
                                     </p>
