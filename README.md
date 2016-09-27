@@ -8,7 +8,7 @@ A simple plug-and-play Laravel 5 package that will generate a nice API documenta
 
 ### Setup ###
 
-Do NOT install this package on your production environment unless you intend to make your API documentation public.
+Do NOT install this package on your production environment unless you intend to make your API documentation public. In most cases it's best to keep it in the development environment.
 
 Run this in your project folder:
 ~~~
@@ -20,13 +20,13 @@ Add this to the config/app.php providers:
 Paplauskas\ApiDocs\ApiDocsServiceProvider::class,
 ~~~
 
-That's it, no additional configuration is involved.
+That's it!
 
 ### How do I use it? ###
 
-If setting up ApiDocs went well, you should be able to access it through /apidocs (for example http://website.dev/apidocs).
+If setting up ApiDocs went well, you should be able to access it through /apidocs route (for example http://website.dev/apidocs).
 
-Please note that you still have to document your endpoints by hand.
+Please note that you still have to document your endpoints by hand - ain't no magic here.
 
 ### How to write documentation? ###
 
@@ -53,7 +53,7 @@ Just write comments right next to your routes. Api endpoint description format i
     * @return width
     * @return height
     */
-    Route::get('images/{imageID}', 'ImageController@get');
+    Route::get('images/{imageID}', 'ImageController@show');
 ~~~
 
 As you probably noticed, @ title and @ description are optional tags - the first line is always treated as a title. @param, @return can be declared in several lines if you want to. Description line is optional and doesn't have to be specified at all. Use whatever format is more readable to you.
