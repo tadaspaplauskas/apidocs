@@ -2,66 +2,70 @@
 
 ### What is this repository for? ###
 
-ApiDocs is a simple Laravel 5 package that will automatically generate API documentation from your routes.php file.
+A simple plug-and-play Laravel 5 package that will generate a nice API documentation page based on your documented routes.
+
+![List view](https://raw.githubusercontent.com/TadasPaplauskas/apidocs/screenshots/list.PNG "List view")
 
 ### Setup ###
 
-Add to the require-dev:
+Do NOT install this package on your production environment unless you intend to make your API documentation public.
+
+Run this in your project folder:
 ~~~
-"paplauskas/apidocs": ">=0.1",
+composer require paplauskas/apidocs --dev
 ~~~
 
-Run:
-~~~
-composer update paplauskas/apidocs
-or just
-composer update
-~~~
-
-Finally, add this to the config/app.php 'providers' array
+Add this to the config/app.php providers:
 ~~~
 Paplauskas\ApiDocs\ApiDocsServiceProvider::class,
 ~~~
 
-
-Ready!
+That's it, no additional configuration is involved.
 
 ### How do I use it? ###
 
-If setting up ApiDocs went well, you should be able to access it through /apidocs (for example http://website.dev/apidocs). Default password is "secret".
+If setting up ApiDocs went well, you should be able to access it through /apidocs (for example http://website.dev/apidocs).
 
-If you wish to change the password (and you definitely should if your development environment is public), run artisan command "vendor:publish". Now you can edit the default settings in the config/apidocs.php file.
+Please note that you still have to document your endpoints by hand.
 
 ### How to write documentation? ###
 
-Format more or less follows the usual DocBlocks format. Write comments right before the route you wish to document. Example:
+Just write comments right next to your routes. Api endpoint description format is pretty similar to the usual DocBlocks format. Write comments right before the route you wish to document. Example:
 
 ~~~
     /**
     * @title Upload an image
     * @description Uploads the original image to the server, resizes it.
     * @group Images
-    * @param  file image
-    * @return string path
+    * @param  image
+    * @param  scale
+    * @return stored image url
     */
     Route::post('images/upload', 'ImageController@upload');
 
     /**
-    * Get image path
-    * Returns image path based on image ID.
+    * Get image
+    * Returns image info
     * @group Images
-    * @param  int imageID
-    * @return string path
+    * @param  imageID
+    * @return path
+    * @return alt
+    * @return width
+    * @return height
     */
-    Route::get('images/get/{imageID}', 'ImageController@get');
+    Route::get('images/{imageID}', 'ImageController@get');
 ~~~
 
-As you probably noticed, @ title and @ description are optional tags - the first line is always considered as title. @param, @return can be declared in several lines if you want to. Description line is optional and doesn't have to be specified at all. Use whatever format is more readable to you.
+As you probably noticed, @ title and @ description are optional tags - the first line is always treated as a title. @param, @return can be declared in several lines if you want to. Description line is optional and doesn't have to be specified at all. Use whatever format is more readable to you.
 
+Package is smart enough to recognise group prefixes, so don't worry about them.
 
 Undocumented routes are ignored.
 
-Package is smart enough to recognise group prefixes, so don't worry about them.
+ApiDocs checks for routes in the usual locations:
+* app/Http/routes.php
+* routes/api.php
+* routes/web.php
 
 ### Found a bug? ###
 
