@@ -1,6 +1,6 @@
 {
     "name": "paplauskas/apidocs",
-    "description": "A simple way to automatically document API routes",
+    "description": "A simple plug-and-play Laravel 5 package that will automatically generate API documentation from your routes file.",
     "authors": [
         {
             "name": "Tadas Paplauskas",
@@ -8,11 +8,11 @@
         }
     ],
 	"homepage": "https://github.com/TadasPaplauskas/apidocs",
-    "keywords": ["documentation", "generator", "laravel"],
+    "keywords": ["documentation", "generator", "laravel", "api", "docblock"],
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Paplauskas\\ApiDocs\\": "app/"
+            "Paplauskas\\ApiDocs\\": "src/"
         }
     },
     "minimum-stability": "dev",
